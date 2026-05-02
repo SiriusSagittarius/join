@@ -7,7 +7,7 @@ import { ContactsEdit } from '../contacts-edit/contacts-edit';
 
 @Component({
   selector: 'app-contacts',
-  imports: [ContactsDetails, SvgDb,  ContactsEdit],
+  imports: [ContactsDetails, SvgDb, ContactsEdit],
   templateUrl: './contacts.html',
   styleUrl: './contacts.scss',
 })
@@ -17,9 +17,15 @@ export class Contacts {
   selectedUser: any = null;
   showAddContact = false;
   showEditContact = false;
+  showMobileDetails = false;
 
   showDetails(user: { id: any }) {
     this.selectedUser = user;
+    this.showMobileDetails = true;
+  }
+
+  closeMobileDetails() {
+    this.showMobileDetails = false;
   }
 
   openAddContact() {
@@ -44,6 +50,7 @@ export class Contacts {
       await this.demoDB.deleteData(this.selectedUser.id);
       await this.demoDB.getDemoData();
       this.selectedUser = null; // Detailansicht schließen, da der Kontakt gelöscht wurde
+      this.showMobileDetails = false; // Auf Mobile zurück zur Liste
     }
   }
 }

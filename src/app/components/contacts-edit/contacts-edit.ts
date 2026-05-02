@@ -23,6 +23,7 @@ export class ContactsEdit implements OnInit {
   contactName: string = '';
   contactEmail: string = '';
   contactPhone: string = '';
+  errorMessage: string = '';
 
   ngOnInit() {
     if (this.user) {

@@ -127,8 +127,8 @@ export class Supabase {
     }
   }
 
-  async insertTask(task: Omit<Task, 'id'>) {
-    // id wird von DB generiert oder in Angular erzeugt
+  async insertTask(task: Task) {
+    // id wird in Angular erzeugt, weil die DB sie nicht auto-generiert
     const { data, error } = await this.supabase.from('tasks').insert([task]).select();
     if (error) console.error('Fehler beim Einfügen des Tasks:', error.message);
     return data;

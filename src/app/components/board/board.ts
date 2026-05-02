@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Supabase } from '../../services/supabase';
@@ -38,7 +38,6 @@ export interface Category {
 export class Board implements OnInit {
   supabaseService = inject(Supabase);
 
-  tasks: Task[] = [];
   categories: Category[] = [
     { id: 'category-0', name: 'To do' },
     { id: 'category-1', name: 'In progress' },
@@ -52,7 +51,25 @@ export class Board implements OnInit {
   selectedPriority: string = 'medium';
 
   editingTaskId: number | null = null;
-  contacts: any[] = []; // Muss noch von supabaseService.contacts() kommen
+
+  // Berechnet das Kontakt-Array automatisch neu, sobald sich die Supabase-Daten ändern
+  private _contacts = computed(() => {
+    const rawContacts = this.supabaseService.contacts();
+    return rawContacts.map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      color: c.color || this.getColorForName(c.name),
+      initials: c.initials || this.getInitials(c.name),
+    }));
+  });
+
+  get contacts(): any[] {
+    return this._contacts();
+  }
+  get tasks(): Task[] {
+    return this.supabaseService.tasks();
+  }
+
   dropdownOpen = false;
   selectedContacts: any[] = [];
   isTaskDetailOpen: boolean = false;
@@ -67,54 +84,16 @@ export class Board implements OnInit {
   newSubtasks: Subtask[] = [];
 
   async ngOnInit() {
-    // Initialisiere Tasks und Contacts mit den Signals aus dem Service
-    this.tasks = this.supabaseService.tasks();
-    this.contacts = this.supabaseService.contacts();
-
     await this.loadTasks();
     await this.loadContacts();
   }
 
   async loadTasks() {
-    const storedTasks = localStorage.getItem('join_test_db');
-    if (storedTasks) {
-      this.tasks = JSON.parse(storedTasks);
-    } else {
-      this.loadMockTasks();
-      this.saveTasksToDB();
-    }
-  }
-
-  saveTasksToDB() {
-    localStorage.setItem('join_test_db', JSON.stringify(this.tasks));
-  }
-
-  loadMockTasks() {
-    this.tasks = [
-      {
-        id: 1,
-        title: 'Contact Form & Imprint',
-        description: 'Create a contact form and imprint page...',
-        category: 'category-0',
-        type: 'User Story',
-        dueDate: '2026-05-15',
-        priority: 'high',
-        assignedTo: ['AM', 'EM', 'MB'],
-        subtasks: [{ subtaskText: 'Implement form', completed: false }],
-      },
-    ];
+    await this.supabaseService.getTasks();
   }
 
   async loadContacts() {
     await this.supabaseService.getDemoData();
-    const dbContacts = this.supabaseService.contacts ? this.supabaseService.contacts() : [];
-
-    this.contacts = dbContacts.map((c: any) => ({
-      id: c.id,
-      name: c.name,
-      color: c.color || this.getColorForName(c.name),
-      initials: c.initials || this.getInitials(c.name),
-    }));
   }
 
   getInitials(name: string): string {
@@ -206,7 +185,7 @@ export class Board implements OnInit {
       const task = this.tasks.find((t) => t.id === this.currentDraggedElementId);
       if (task) {
         task.category = categoryId;
-        this.saveTasksToDB();
+        await this.supabaseService.updateTask(task.id, { category: categoryId });
       }
       this.currentDraggedElementId = null;
     }
@@ -265,33 +244,19 @@ export class Board implements OnInit {
     this.newSubtasks = [];
   }
 
-  saveTaskFromBoard(): void {
+  async saveTaskFromBoard(): Promise<void> {
     if (!this.newTaskTitle || !this.newTaskDueDate || !this.newTaskType) {
-      alert('Bitte fülle alle Pflichtfelder (*) aus!');
+      const missing = [];
+      if (!this.newTaskTitle) missing.push('Title');
+      if (!this.newTaskDueDate) missing.push('Due date');
+      if (!this.newTaskType) missing.push('Category (Task Type)');
+
+      alert(`Bitte fülle alle Pflichtfelder (*) aus!\n\nNoch leer: ${missing.join(', ')}`);
       return;
     }
 
     if (this.editingTaskId !== null) {
-      // Existierenden Task aktualisieren
-      const taskIndex = this.tasks.findIndex((t) => t.id === this.editingTaskId);
-      if (taskIndex > -1) {
-        this.tasks[taskIndex] = {
-          ...this.tasks[taskIndex],
-          title: this.newTaskTitle,
-          description: this.newTaskDescription,
-          category: this.newTaskCategory,
-          type: this.newTaskType,
-          dueDate: this.newTaskDueDate,
-          priority: this.selectedPriority,
-          assignedTo: this.selectedContacts.map((c) => c.initials),
-          assignedToNames: this.selectedContacts.map((c) => c.name),
-          subtasks: [...this.newSubtasks],
-        };
-      }
-    } else {
-      // Neuen Task erstellen
-      const newTask: Task = {
-        id: new Date().getTime(), // Eindeutige ID generieren
+      const updatedTask: Partial<Task> = {
         title: this.newTaskTitle,
         description: this.newTaskDescription,
         category: this.newTaskCategory,
@@ -302,16 +267,29 @@ export class Board implements OnInit {
         assignedToNames: this.selectedContacts.map((c) => c.name),
         subtasks: [...this.newSubtasks],
       };
-      this.tasks.push(newTask);
+      await this.supabaseService.updateTask(this.editingTaskId, updatedTask);
+    } else {
+      const newTask: Task = {
+        id: new Date().getTime(),
+        title: this.newTaskTitle,
+        description: this.newTaskDescription,
+        category: this.newTaskCategory,
+        type: this.newTaskType,
+        dueDate: this.newTaskDueDate,
+        priority: this.selectedPriority,
+        assignedTo: this.selectedContacts.map((c) => c.initials),
+        assignedToNames: this.selectedContacts.map((c) => c.name),
+        subtasks: [...this.newSubtasks],
+      };
+      await this.supabaseService.insertTask(newTask);
     }
 
-    this.saveTasksToDB();
+    alert('Task erfolgreich auf dem Board gespeichert!');
     this.closeAddTaskModal();
   }
 
-  deleteTask(taskId: number): void {
-    this.tasks = this.tasks.filter((t) => t.id !== taskId);
-    this.saveTasksToDB();
+  async deleteTask(taskId: number): Promise<void> {
+    await this.supabaseService.deleteTaskSupabase(taskId);
     this.closeTaskDetail();
   }
 

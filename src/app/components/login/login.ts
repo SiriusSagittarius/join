@@ -79,7 +79,7 @@ export class Login implements OnInit {
 
   isFormValid(): boolean {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // Mind. 8 Zeichen, 1 Kleinbuchstabe, 1 Großbuchstabe, 1 Zahl, 1 Sonderzeichen
+   
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
     return (
@@ -92,7 +92,7 @@ export class Login implements OnInit {
   }
 
   getSignUpHint(): string {
-    // Zeige keinen Fehler an, wenn das Formular noch komplett leer ist
+   
     if (!this.name && !this.email && !this.password && !this.confirmPassword) {
       return '';
     }
@@ -176,7 +176,7 @@ export class Login implements OnInit {
       return;
     }
 
-    // E-Mail-Format überprüfen
+    
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(this.email)) {
       this.errorMessage = 'Bitte eine gültige E-Mail-Adresse eingeben.';
@@ -226,7 +226,7 @@ export class Login implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // Direkter Login ohne Datenbank-Abfrage
+   
     localStorage.setItem('userInitial', 'G');
     localStorage.setItem('userName', 'Guest');
     this.router.navigate(['/summary']);

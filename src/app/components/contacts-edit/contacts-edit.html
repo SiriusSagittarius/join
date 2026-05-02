@@ -100,11 +100,17 @@
           }
         </div>
 
+        <div class="message-placeholder">
+          @if (errorMessage) {
+            <span class="error-text">{{ errorMessage }}</span>
+          }
+        </div>
+
         <div class="form-actions">
           @if (isEditMode) {
             <button
               type="button"
-              class="btn-delete"
+              class="btn-one"
               (click)="deleteContact()"
               [disabled]="isDeleting || isSaving"
             >
@@ -112,18 +118,18 @@
             </button>
             <button
               type="submit"
-              class="btn-save"
+              class="btn-two"
               [disabled]="contactForm.invalid || isSaving || isDeleting"
             >
               {{ isSaving ? 'Saving...' : 'Save' }}
               <img src="/icons/img/save.svg" alt="Check Icon" />
             </button>
           } @else {
-            <button type="button" class="btn-delete" (click)="close()">
+            <button type="button" class="btn-one" (click)="close()">
               Cancel
               <img src="/icons/img/close.svg" alt="Close Icon" />
             </button>
-            <button type="submit" class="btn-save" [disabled]="contactForm.invalid || isSaving">
+            <button type="submit" class="btn-two" [disabled]="contactForm.invalid || isSaving">
               {{ isSaving ? 'Creating...' : 'Create contact' }}
               <img src="/icons/img/save.svg" alt="Check Icon" />
             </button>

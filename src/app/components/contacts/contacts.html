@@ -1,5 +1,5 @@
 <section class="contacts">
-  <div class="contact-list">
+  <div class="contact-list" [class.d-none-mobile]="showMobileDetails">
     <div class="contact-button">
       <button class="primary-button" (click)="openAddContact()">
         Add new contact
@@ -34,9 +34,19 @@
     [user]="selectedUser"
     (editRequest)="openEditContact()"
     (deleteRequest)="deleteContact()"
+    [class.d-block-mobile]="showMobileDetails"
+    (backRequest)="closeMobileDetails()"
   ></app-contacts-details>
 
   @if (showEditContact) {
     <app-contacts-edit [user]="selectedUser" (closeEdit)="closeEditContact()"></app-contacts-edit>
   }
+
+  <button
+    class="add-contact-fab"
+    (click)="openAddContact()"
+    [class.d-none-mobile]="showMobileDetails"
+  >
+    <app-svg-db name="person-add"></app-svg-db>
+  </button>
 </section>

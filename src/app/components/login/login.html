@@ -2,7 +2,10 @@
   @if (showOverlay) {
     <div class="blue-overlay" id="blue-overlay">
       <div class="joinLogoWhite logo-animation" id="logo" (animationend)="hideOverlay()">
-        <img src="/icons/img/logo.svg" alt="logo" />
+        <picture>
+          <source media="(max-width: 425px)" srcset="/icons/img/logo-w-mobil.svg" />
+          <img src="/icons/img/logo.svg" alt="logo" />
+        </picture>
       </div>
     </div>
   }

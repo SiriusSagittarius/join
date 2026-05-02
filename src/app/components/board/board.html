@@ -111,7 +111,11 @@
 
   @if (isAddTaskModalOpen) {
     <div class="modal-overlay" (click)="closeAddTaskModal()">
-      <section id="add-task-modal" [class.edit-mode]="editingTaskId !== null" (click)="$event.stopPropagation()">
+      <section
+        id="add-task-modal"
+        [class.edit-mode]="editingTaskId !== null"
+        (click)="$event.stopPropagation()"
+      >
         <div class="modal-container">
           <button class="close-btn" aria-label="Close" (click)="closeAddTaskModal()">
             <img src="/icons/img/cancle.svg" alt="Close" />
@@ -132,6 +136,7 @@
                   class="form-control"
                   placeholder="Enter a title"
                   [(ngModel)]="newTaskTitle"
+                  name="newTaskTitle"
                 />
               </div>
 
@@ -142,6 +147,7 @@
                     class="form-control"
                     placeholder="Enter a Description"
                     [(ngModel)]="newTaskDescription"
+                    name="newTaskDescription"
                   ></textarea>
                 </div>
               </div>
@@ -149,7 +155,12 @@
               <div class="form-group">
                 <label>Due date<span class="required">*</span></label>
                 <div class="input-with-icon">
-                  <input type="date" class="form-control" [(ngModel)]="newTaskDueDate" />
+                  <input
+                    type="date"
+                    class="form-control"
+                    [(ngModel)]="newTaskDueDate"
+                    name="newTaskDueDate"
+                  />
                 </div>
               </div>
             </div>
@@ -236,7 +247,7 @@
               <div class="form-group">
                 <label>Category<span class="required">*</span></label>
                 <div class="select-wrapper">
-                  <select class="form-control" [(ngModel)]="newTaskType">
+                  <select class="form-control" [(ngModel)]="newTaskType" name="newTaskType">
                     <option value="" disabled selected hidden>Select task category</option>
                     <option value="Technical Task">Technical Task</option>
                     <option value="User Story">User Story</option>
@@ -253,6 +264,7 @@
                     class="form-control"
                     placeholder="Add new subtask"
                     [(ngModel)]="newSubtaskText"
+                    name="newSubtaskText"
                     (keyup.enter)="addSubtask()"
                   />
                   <div class="subtask-actions">

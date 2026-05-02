@@ -213,6 +213,22 @@
   }
 }
 
+@media (max-width: 950px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .brand-title {
+    white-space: nowrap;
+  }
+  .header-divider {
+    width: 90px;
+    height: 3px;
+    order: 3;
+  }
+}
+
 @media (max-width: 850px) {
   .dashboard-main {
     gap: 32px;
@@ -271,18 +287,17 @@
 
 @media (max-width: 750px) {
   .metrics-row {
-    width: 420px;
+    width: 380px;
   }
   .rect-card {
-    width: 200px;
+    width: 180px;
     height: 110px;
   }
   .wide-card {
     height: 110px;
-    padding: 0 24px;
   }
   .square-card {
-    width: 130px;
+    width: 110px;
     height: 110px;
   }
   .card-divider {
@@ -318,48 +333,101 @@
 
 @media (max-width: 670px) {
   #dashboard-section {
-    padding: 40px 20px;
+    padding: 0px 16px;
+    height: 100vh;
+  }
+
+  .metrics-grid {
+    width: 100%;
   }
 
   .metrics-row {
     width: 100%;
-    flex-direction: column;
-    align-items: center;
-    gap: 28px;
+    gap: 8px;
   }
+
+  .rect-card {
+    width: calc(50% - 4px);
+    height: auto;
+    min-height: 100px;
+    padding: 8px;
+    gap: 8px;
+  }
+
   .wide-card {
     width: 100%;
-    max-width: 350px;
-    flex-direction: column;
     height: auto;
-    padding: 40px 30px;
-    gap: 30px;
+    min-height: 100px;
+    padding: 8px 16px;
+    gap: 12px;
   }
+
+  .square-card {
+    max-width: 90px;
+    height: auto;
+    min-height: 90px;
+    padding: 8px 4px;
+    gap: 4px;
+  }
+
   .card-divider {
-    width: 100%;
-    height: 2px;
+    width: 2px;
+    height: 50px;
   }
+
+  .urgent-left {
+    gap: 8px;
+  }
+
   .urgent-right {
-    align-items: center;
-    text-align: center;
+    gap: 4px;
   }
+
+  .metric-value {
+    font-size: 28px;
+  }
+
+  .metric-label {
+    font-size: 11px;
+  }
+
+  .deadline-date {
+    font-size: 14px;
+  }
+
+  .deadline-label {
+    font-size: 12px;
+  }
+
+  .icon-wrapper,
+  .icon-wrapper.urgent-icon {
+    width: 36px;
+    height: 36px;
+  }
+
   .brand-title {
-    font-size: 48px;
+    font-size: 40px;
   }
+
   .header-subtitle {
-    font-size: 20px;
+    font-size: 16px;
   }
+
   .greeting-text {
-    font-size: 36px;
+    font-size: 32px;
   }
+
   .greeting-name {
-    font-size: 48px;
+    font-size: 40px;
   }
+
   .dashboard-header {
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
     text-align: center;
+    align-items: center;
   }
+
   .header-divider {
     width: 60px;
     height: 3px;

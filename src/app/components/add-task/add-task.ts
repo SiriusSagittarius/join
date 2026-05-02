@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Supabase } from '../../services/supabase';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 export class AddTask implements OnInit {
   supabaseService = inject(Supabase);
   route = inject(ActivatedRoute);
+  router = inject(Router);
 
   contacts: any[] = [];
   dropdownOpen = false;
@@ -26,7 +27,7 @@ export class AddTask implements OnInit {
   newSubtaskText = '';
   newSubtasks: { subtaskText: string; completed: boolean }[] = [];
 
-  @Input() targetCategory: string = 'category-0'; 
+  @Input() targetCategory: string = 'category-0';
   @Input() asOverlay: boolean = false;
   @Output() closeOverlay = new EventEmitter<void>();
 
@@ -121,7 +122,7 @@ export class AddTask implements OnInit {
     }
   }
 
-  createTask() {
+  async createTask() {
     if (!this.title || !this.dueDate || !this.taskType) {
       alert('Bitte fülle alle Pflichtfelder (*) aus!');
       return;
@@ -139,13 +140,15 @@ export class AddTask implements OnInit {
       subtasks: [...this.newSubtasks],
     };
 
-    const storedTasks = localStorage.getItem('join_test_db');
-    let tasks = storedTasks ? JSON.parse(storedTasks) : [];
-    tasks.push(newTask);
-    localStorage.setItem('join_test_db', JSON.stringify(tasks));
+    await this.supabaseService.insertTask(newTask);
 
     alert('Task erfolgreich erstellt!');
     this.cancelAction();
+
+    // Wenn wir nicht im Overlay sind, sondern auf der separaten Add-Task Seite: zurück zum Board!
+    if (!this.asOverlay) {
+      this.router.navigate(['/board']);
+    }
   }
 
   clearSubtaskInput() {
