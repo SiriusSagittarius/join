@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { createClient, SupabaseClient, RealtimeChannel } from '@supabase/supabase-js';
-import { Task } from '../components/board/board'; // Importiere das Task-Interface
+import { Task } from '../pages/board/board'; // Importiere das Task-Interface
 
 @Injectable({
   providedIn: 'root',

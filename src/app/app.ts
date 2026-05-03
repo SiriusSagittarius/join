@@ -13,7 +13,6 @@ import { Navigation } from './components/navigation/navigation';
   styleUrl: './app.scss',
 })
 export class App {
-  [x: string]: any;
   protected readonly title = signal('join');
 
   demoDB = inject(Supabase);
@@ -25,8 +24,8 @@ export class App {
     this.demoDB.getDemoData();
 
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event: any) => {
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event) => {
         this.hideMenuAndHeader = event.urlAfterRedirects.includes('/login');
       });
   }
